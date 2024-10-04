@@ -40,7 +40,10 @@ class PendulumSimulation(eqx.Module):
         gravity: Float,
         length: Float,
     ):
-        # Fill in detail here
+        term = dx.ODETerm(self.ODE_system)
+        solver = dx.Dopri5()
+        args = gravity, length
+        saveat = dx.SaveAt(ts=jnp.arange(start=0, stop=self.save_interval, step=self.dt))
         sol = dx.diffeqsolve(
             term,
             solver,
@@ -60,13 +63,26 @@ class PendulumSimulation(eqx.Module):
         length: Float,
     ) -> Float[Array, " n_res n_res"]:
         image = jnp.zeros((self.image_size, self.image_size)).reshape(-1)
-        grid_x, grid_y = # Make x-y coordinate
+        
+        x = jnp.linspace(start=-self.box_size / 2, 
+                         stop=self.box_size / 2,
+                         num=self.image_size, 
+                         endpoint=True)
 
-        coordinates = # Stack the coordination
+        y = jnp.linspace(start=-self.box_size / 2, 
+                         stop=self.box_size / 2, 
+                         num=self.image_size, 
+                         endpoint=True)
 
-        position = # Compute the position of the ball
+        grid_x, grid_y = jnp.meshgrid(x, y, copy=True, sparse=False, indexing='xy')
 
-        distance = # Compute distance from pixels to ball
+
+        coordinates = jnp.stack([grid_x, grid_y])
+
+        position = length * jnp.array([jnp.arccos(angle), jnp.arcsin(angle)])
+
+        distance = np.linalg.norm)
+
         image = # Set pixel values correspondingly
         return image.reshape(self.image_size, self.image_size)
 

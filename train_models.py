@@ -9,8 +9,9 @@ from models import CNNEmulator, LatentODE
 
 
 def loss_fn(model, batch):
-    # Fill
-    raise NotImplementedError
+    x, y = batch
+    y_pred = jax.vmap(model)(x)
+    return jnp.mean((y - y_pred) ** 2)
 
 def train(
     model: CNNEmulator,
